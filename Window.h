@@ -6,6 +6,8 @@
 
 class Window
 {	
+	//new code
+	//more new code
 	const int screen_width = 640;
 	const int screen_height = 400;
 	SDL_Window* window;

@@ -10,25 +10,7 @@ int main(int argc, char const *argv[])
 {
 	Window window;
 	
-	if ( window.init ())
-	{
-		if (window.addSurface())
-		{
-		bool running = true;
-			while ( running )
-			{
-				// window.addSurface();
-				SDL_Event event;
-				if ( SDL_PollEvent( &event ) )
-				{
-					if ( event.type == SDL_QUIT)
-					{
-						running = false;
-						window.close();
-					}
-				}
-			}
-		}
-	}
+	window.runGame();
+	
 	return 0;
 }

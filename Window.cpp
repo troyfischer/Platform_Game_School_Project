@@ -19,6 +19,7 @@ void Window::runGame()
 //private methods
 bool Window::initialize()
 {
+	/* Initialize SDL and Create Window */
 	bool success = true;
 
 	//Initialize SDL
@@ -30,7 +31,7 @@ bool Window::initialize()
 	else
 	{
 		//Create window
-		window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_height, SDL_WINDOW_SHOWN);
+		window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, SDL_WINDOW_SHOWN);
 		if( window == NULL )
 		{
 			logError("SDL_CreateWindow");

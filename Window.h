@@ -6,8 +6,8 @@
 
 class Window
 {	
-	const int screen_width = 640;
-	const int screen_height = 480;
+	const int window_width = 640;
+	const int window_height = 480;
 	SDL_Window *window;
 	SDL_Surface *screen;
 	bool initialize();

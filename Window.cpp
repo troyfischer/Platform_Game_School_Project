@@ -24,7 +24,7 @@ bool Window::initialize()
 	//Initialize SDL
 	if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
 	{
-		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+		logError("SDL_Init");
 		success = false;
 	}
 	else
@@ -33,7 +33,7 @@ bool Window::initialize()
 		window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_height, SDL_WINDOW_SHOWN);
 		if( window == NULL )
 		{
-			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+			logError("SDL_CreateWindow");
 			success = false;
 		}
 	}
@@ -45,7 +45,7 @@ bool Window::addSurface()
 	screen = SDL_GetWindowSurface(window);
 	if (screen == 0)
 	{
-		printf("SDL adding surface error: %s\n", SDL_GetError());
+		logError("SDL_GetWindowSurface");
 		return 0;
 	}
 	SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 255));
@@ -61,23 +61,21 @@ void Window::gameLoop()
 	while (running)
 	{
 		float start_tick = SDL_GetTicks();
-		SDL_Event event;
-		if (SDL_PollEvent(&event))
+		running = handleEvent();
+		if (!running)
 		{
-			if (event.type == SDL_QUIT)
-			{
-				close();
-				break;
-			}
+			break;
 		}
 		regulateFrameRate(start_tick);
+		frameRate(start_tick1);
 	}
 }
 
 void Window::close()
 {
-	SDL_DestroyWindow(window) ;
+	SDL_DestroyWindow(window);
 	SDL_Quit();
+	exit(0);
 }
 
 void Window::frameRate(float &start_tick)
@@ -103,6 +101,27 @@ void Window::regulateFrameRate(float start_tick)
 		SDL_Delay((1000.0 / FPS) - (SDL_GetTicks() - start_tick)); 
 	}
 
+}
+
+bool Window::handleEvent()
+{
+	//returns 1 for continue gameLoop and 0 for end gameLoop
+	SDL_Event event;
+
+	if (SDL_PollEvent(&event))
+	{
+		if (event.type == SDL_QUIT)
+		{
+			close();
+			return 0;
+		}
+	}
+	return 1;
+}
+
+void Window::logError(const std::string msg)
+{
+	printf("%s error: %s\n", msg.c_str(), SDL_GetError());
 }
 
 // void Window::addCharacter(Character character)

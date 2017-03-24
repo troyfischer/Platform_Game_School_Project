@@ -16,6 +16,8 @@ class Window
 	void close();
 	void frameRate(float &start_tick);
 	void regulateFrameRate(float start_tick);
+	bool handleEvent();
+	void logError(const std::string msg);
 public:
 	Window();
 	void runGame();

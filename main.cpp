@@ -12,17 +12,20 @@ int main(int argc, char const *argv[])
 	
 	if ( window.init ())
 	{
-		bool running = true;
-		while ( running )
+		if (window.addSurface())
 		{
-			// window.addSurface();
-			SDL_Event event;
-			if ( SDL_PollEvent( &event ) )
+		bool running = true;
+			while ( running )
 			{
-				if ( event.type == SDL_QUIT)
+				// window.addSurface();
+				SDL_Event event;
+				if ( SDL_PollEvent( &event ) )
 				{
-					running = false;
-					window.close();
+					if ( event.type == SDL_QUIT)
+					{
+						running = false;
+						window.close();
+					}
 				}
 			}
 		}

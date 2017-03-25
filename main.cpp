@@ -1,16 +1,35 @@
-/*This source code copyrighted by Lazy Foo' Productions (2004-2015)
-and may not be redistributed without written permission.*/
+//
+//  main.cpp
+//  Platformer
+//
+//  Created by Troy Fischer on 3/25/17.
+//  Copyright © 2017 Troy Fischer. All rights reserved.
+//
 
-//Using SDL and standard IO
-#include <SDL2/SDL.h>
 #include <stdio.h>
-#include "Window.h"
+#include "GameWindow.hpp"
+#include "Character.hpp"
 
-int main(int argc, char const *argv[])
+void handleAllEvents(GameWindow &gameWindow, Character &cartman)
 {
-	Window window;
-	
-	window.runGame();
-	
-	return 0;
+    SDL_Event e;
+    while (SDL_PollEvent(&e)) {
+        gameWindow.handleWindowEvent(e);
+        cartman.handleMovement(e);
+    }
+}
+
+int main(int argc, const char ** argv)
+{
+    GameWindow gameWindow("Dungeon Escape");
+    Character cartman(gameWindow, WINDOW_WIDTH/4, WINDOW_HEIGHT/4, 100, 100);
+    
+    while (gameWindow.isOpen()) {
+        float start_tick = SDL_GetTicks();
+        handleAllEvents(gameWindow, cartman);
+        cartman.drawCharacter();
+        gameWindow.renderBackground();
+        gameWindow.regulateFrameRate(start_tick);
+    }
+    return 0;
 }

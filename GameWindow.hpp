@@ -13,6 +13,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
+#include <SDL2_ttf/SDL_ttf.h>
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -21,16 +22,28 @@ class GameWindow
 {
 private:
     SDL_Window *_window;
-    std::string _title;
-protected:
     SDL_Renderer *_renderer;
-    void logSDLError(const std::string &msg) const;
-    void logIMGError(const std::string &msg) const;
+    SDL_Texture *_background;
+    SDL_Rect _backgroundRect;
+    TTF_Font *_livesFont;
+    SDL_Texture *_livesTexture;
+    TTF_Font *_levelFont;
+    TTF_Font *_timeFont;
+    std::string _title;
+    void loadTexture(const std::string path);
     bool _open;
+    
 public:
     GameWindow(std::string title);
     ~GameWindow();
+    SDL_Renderer * getRenderer();
+    
+    static void logSDLError(const std::string &msg);
+    static void logIMGError(const std::string &msg);
+    static void logTTFError(const std::string &msg);
+    
     bool isOpen();
+    void closeGameWindow();
     void handleWindowEvent(SDL_Event &e);
     void renderBackground();
     void regulateFrameRate(float start_tick);

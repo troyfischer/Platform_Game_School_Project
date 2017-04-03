@@ -1,35 +1,40 @@
-//
-//  main.cpp
-//  Platformer
-//
-//  Created by Troy Fischer on 3/25/17.
-//  Copyright © 2017 Troy Fischer. All rights reserved.
-//
-
 #include <stdio.h>
 #include "GameWindow.hpp"
 #include "Character.hpp"
 
-void handleAllEvents(GameWindow &gameWindow, Character &cartman)
+void handleAllEvents(GameWindow &gameWindow)
 {
-    SDL_Event e;
-    while (SDL_PollEvent(&e)) {
-        gameWindow.handleWindowEvent(e);
-        cartman.handleMovement(e);
-    }
+    
 }
 
 int main(int argc, const char ** argv)
 {
     GameWindow gameWindow("Dungeon Escape");
-    Character cartman(gameWindow, WINDOW_WIDTH/4, WINDOW_HEIGHT/4, 100, 100);
     
-    while (gameWindow.isOpen()) {
-        float start_tick = SDL_GetTicks();
-        handleAllEvents(gameWindow, cartman);
-        cartman.drawCharacter();
-        gameWindow.renderBackground();
-        gameWindow.regulateFrameRate(start_tick);
+    Character sprite(gameWindow.getRenderer(), 0, 0, 4, 4);
+    
+    float previousTick = 0.0f;
+    float currentTick = 0.0f;
+    float timeBetweenFrames = 0.0f; //will be in seconds
+    SDL_Event e;
+    while (gameWindow.isOpen())
+    {
+        previousTick = currentTick;
+        currentTick = SDL_GetTicks();
+        timeBetweenFrames = (currentTick - previousTick) / 1000.0f;
+        while (SDL_PollEvent(&e))
+        {
+            if (e.type == SDL_QUIT)
+            {
+                gameWindow.closeGameWindow();
+            }
+        }
+        
+        sprite.renderCharacter(gameWindow.getRenderer(), timeBetweenFrames);
+        SDL_RenderPresent(gameWindow.getRenderer());
+        SDL_RenderClear(gameWindow.getRenderer());
     }
+    
+    
     return 0;
 }

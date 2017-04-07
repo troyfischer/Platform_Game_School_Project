@@ -1,14 +1,6 @@
-//
-//  GameWindow.cpp
-//  Platformer
-//
-//  Created by Troy Fischer on 3/25/17.
-//  Copyright © 2017 Troy Fischer. All rights reserved.
-//
-
 #include "GameWindow.hpp"
 
-GameWindow::GameWindow(std::string title) : _title(title)
+GameWindow::GameWindow(std::string title)
 {
     _window = NULL;
     _background = NULL;
@@ -40,7 +32,7 @@ GameWindow::GameWindow(std::string title) : _title(title)
     
     
     //create a window
-    _window = SDL_CreateWindow(_title.c_str(),
+    _window = SDL_CreateWindow(title.c_str(),
                                SDL_WINDOWPOS_CENTERED,
                                SDL_WINDOWPOS_CENTERED,
                                WINDOW_WIDTH,
@@ -61,6 +53,9 @@ GameWindow::GameWindow(std::string title) : _title(title)
         logSDLError("SDL_CreateRenderer");
         _open = false;
     }
+    
+    /* Load Background */
+    _background = IMG_LoadTexture(_renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/background.jpg");
     
 }
 
@@ -91,32 +86,9 @@ void GameWindow::closeGameWindow()
     _open = false;
 }
 
-void GameWindow::handleWindowEvent(SDL_Event &e)
-{
-        switch (e.type)
-        {
-            case SDL_QUIT:
-                _open = false;
-                break;
-            case SDL_KEYDOWN:
-                if (e.key.keysym.sym == SDLK_ESCAPE)
-                {
-                    _open = false;
-                }
-                break;
-            default:
-                break;
-        }
-}
-
 void GameWindow::renderBackground()
 {
-    _background = IMG_LoadTexture(_renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/background.jpg");
     SDL_RenderCopy(_renderer, _background, NULL, NULL);
-    //_backgroundRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-    //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    //SDL_RenderClear(renderer);
-    //SDL_RenderFillRect(renderer, &_backgroundRect);
 }
 
 void GameWindow::regulateFrameRate(float start_tick)
@@ -145,11 +117,4 @@ void GameWindow::logIMGError(const std::string &msg)
 void GameWindow::logTTFError(const std::string &msg)
 {
     std::cerr << msg << " error: " << TTF_GetError() << std::endl;
-}
-
-void GameWindow::loadTexture(const std::string path)
-{
-    _backgroundRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-    _background = IMG_LoadTexture(_renderer, path.c_str());
-    SDL_RenderCopy(_renderer, _background, NULL, &_backgroundRect);
 }

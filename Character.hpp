@@ -2,26 +2,42 @@
 #define Character_hpp
 
 #include <stdio.h>
+#include <cmath>
 #include "GameWindow.hpp"
+#include "Text.hpp"
+#include "Enemy.hpp"
+#include "Sprite.hpp"
 
-
-class Character
+class Character : public Sprite
 {
-    SDL_Texture *_texture;
-    SDL_Rect _cropRect;
-    SDL_Rect _playerRect;
-    float _moveSpeed;
-    float _frameCounter;
-    int _spriteWidth, _spriteHeight;
-    int _textureWidth, _textureHeight;
-    float _x, _y;
-    bool _isMoving;
-    void update(float deltaT);
-    void drawCharacter(SDL_Renderer *renderer);
+private:
+    /* ---------------------Attributes----------------------- */
+    int _lives;
+    
+    /* -----------------Gravity Attributes------------------- */
+    float _gravity;
+    int _jumpSpeed;
+    float _inAirSpeed;
+    bool _onGround;
+    bool _isJumping;
+
+    /* Used during animation */
+    float _frameCount;
+    
+    /* The Text object will be there so the lives can be updated from the Character class */
+    Text *_livesText;
+    
+    const Uint8 * getKeyState();
+    /* -------------------Movement methods------------------------ */
+    void jump(float timeBetweenFrames);
+    void applyGravity(float timeBetweenFrames);
+    void resetJumpFields();
+    void animateInAir(const Uint8 *keyState, float timeBetweenFrames);
+    void animateRunning(const Uint8 *keyState, bool isMoving, float timeBetweenFrames);
+    void update(float timeBetweenFrames) override;
 public:
-    Character(SDL_Renderer *renderer, int x, int y, int framesX, int framesY);
-    ~Character();
-    void renderCharacter(SDL_Renderer *renderer, float deltaT);
+    Character(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY);
+    void render(SDL_Renderer *renderer, float timeBetweenFrames) override;
 };
 
 #endif /* Character_hpp */

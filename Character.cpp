@@ -1,133 +1,171 @@
-//
-//  Character.cpp
-//  Platformer
-//
-//  Created by Troy Fischer on 3/25/17.
-//  Copyright © 2017 Troy Fischer. All rights reserved.
-//
-
 #include "Character.hpp"
-#include "GameWindow.hpp"
+#include <sstream>
 
-Character::Character(SDL_Renderer *renderer, int x, int y, int numSpritesX, int numSpritesY)
+Character::Character(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY) : Sprite(renderer, textureFilePath, numFramesX, numFramesY)
 {
-    _texture = NULL;
-    _moveSpeed = 100.0f; //default movespeed
+    /* Setting the size of the main character */
+    _spriteRect.w = _spriteRect.h = 50;
     
-    SDL_Surface *charSurface = NULL;
-    charSurface = IMG_Load("/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/SpriteSheet.png");
+    /* Setting intital position of main character */
+    _x = _spriteRect.x = 0;
+    _y = _spriteRect.y = WINDOW_HEIGHT - _spriteRect.h;
     
-    if (!charSurface)
+    
+    /* Setting attributes */
+    _lives = 3;
+    _groundMoveSpeed = 100.0f;
+    _inAirSpeed = 10.0f;
+    _gravity = 0.0f;
+    _jumpSpeed = -200.0f;
+    _onGround = true;
+    _isJumping = false;
+    
+    /* This portion will initialize the text on the screen that keeps the Character's lives */
+    _livesText = NULL;
+    std::stringstream textStream;
+    textStream << "Lives: " << _lives;
+    _livesText = new Text(renderer, textStream.str(), {0, 255, 255, 255},"/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 20);
+    
+    _frameCount = 0;
+}
+
+const Uint8 * Character::getKeyState()
+{
+    const Uint8 *keyState = SDL_GetKeyboardState(NULL);
+    
+    return keyState;
+}
+
+void Character::jump(float timeBetweenFrames)
+{
+
+    const Uint8 *keyState = getKeyState();
+    
+    if (keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_D] && _isJumping)
     {
-        GameWindow::logIMGError("IMG_Load");
+        animateInAir(keyState, timeBetweenFrames);
+        _y += _jumpSpeed * timeBetweenFrames;
+        _jumpSpeed += 2.0f;
+        _spriteRect.y = _y;
+        if (!offScreen_x(true, _groundMoveSpeed, timeBetweenFrames))
+        {
+            _x += _inAirSpeed * timeBetweenFrames;
+            _spriteRect.x = _x;
+        }
+    }
+    else if (keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_A] && _isJumping)
+    {
+        animateInAir(keyState, timeBetweenFrames);
+        _y += _jumpSpeed * timeBetweenFrames;
+        _jumpSpeed += 2.0f;
+        _spriteRect.y = _y;
+        if (!offScreen_x(false, _groundMoveSpeed, timeBetweenFrames))
+        {
+            _x += -_inAirSpeed * timeBetweenFrames;
+            _spriteRect.x = _x;
+        }
+    }
+    else if (keyState[SDL_SCANCODE_W] && _isJumping)
+    {
+        _y += _jumpSpeed * timeBetweenFrames;
+        _jumpSpeed += 2.0f;
+        _spriteRect.y = _y;
     }
     else
     {
-        _texture = SDL_CreateTextureFromSurface(renderer, charSurface);
-        if (!_texture)
+        _isJumping = false;
+    }
+    
+}
+
+void Character::applyGravity(float timeBetweenFrames)
+{
+    const Uint8 *keyState = getKeyState();
+    
+    if (keyState[SDL_SCANCODE_D])
+    {
+        animateInAir(keyState, timeBetweenFrames);
+        if (!offScreen_x(true, _groundMoveSpeed, timeBetweenFrames))
         {
-            GameWindow::logSDLError("SDL_CreateTextureFromSurface");
+            _x += _inAirSpeed * timeBetweenFrames;
+            _spriteRect.x = _x;
+        }
+    }
+    else if (keyState[SDL_SCANCODE_A])
+    {
+        animateInAir(keyState, timeBetweenFrames);
+        if (!offScreen_x(false, _groundMoveSpeed, timeBetweenFrames))
+        {
+            _x += -_inAirSpeed * timeBetweenFrames;
+            _spriteRect.x = _x;
         }
     }
     
-    SDL_FreeSurface(charSurface);
-    
-    SDL_QueryTexture(_texture, NULL, NULL, &_cropRect.w, &_cropRect.h);
-        
-    /* The _cropRect is going to take the individual sprite off of the sprite sheet
-     The _cropRect size is going to be determined by how many sprite frames there are in each row and column
-     The _cropRect is then going to be fit into the _playerRect */
-    
-    //Sets the starting position of the character
-    _x = x;
-    _y = y;
-    
-    //_textureWidth holds the total width of the sprite sheet & _textureHeight holds the height of the sprite sheet
-    _textureWidth = _cropRect.w;
-    _textureHeight = _cropRect.h;
-    
-    //sets the _cropRect to be the size of an individual sprite on the sheet
-    _cropRect.w /= numSpritesX;
-    _cropRect.h /= numSpritesY;
-    
-    //sets the size of each individual sprite
-    _spriteWidth = _cropRect.w;
-    _spriteHeight = _cropRect.h;
-    
-    //sets the size of the character on the screen
-    _playerRect.w = 50;
-    _playerRect.h = 50;
-    
-    _cropRect.x = 0;
-    _cropRect.y = 0;
-    
-    _frameCounter = 0;
-    
-    _isMoving = false;
-}
-
-Character::~Character()
-{
-    SDL_DestroyTexture(_texture);
-}
-
-void Character::update(float deltaT)
-{
-    const Uint8 * keyStates = SDL_GetKeyboardState(NULL);
-    
-    _isMoving = true;
-    
-    if (keyStates[SDL_SCANCODE_W])
+    if (_isJumping && !offScreen_y(false, _gravity, timeBetweenFrames))
     {
-        if (_y - (_moveSpeed * deltaT) >= 0)
-        {
-            _y -= _moveSpeed * deltaT;
-        }
-        _playerRect.y = _y;
-    
-        _cropRect.y = _spriteHeight * 3;
+        _y += _gravity * timeBetweenFrames;
+        _spriteRect.y = _y;
+        _gravity += 2.0f;
     }
-    else if (keyStates[SDL_SCANCODE_S])
+    else if (!offScreen_y(false, _gravity, timeBetweenFrames))
     {
-        if ((_y + _playerRect.h) + (_moveSpeed * deltaT) <= WINDOW_HEIGHT)
-        {
-            _y += _moveSpeed * deltaT;
-        }
-        _playerRect.y = _y;
-        
+        _y += _gravity * timeBetweenFrames;
+        _spriteRect.y = _y;
+        _gravity += 1.0f;
+    }
+    else
+    {
+        resetJumpFields();
+    }
+}
+
+void Character::resetJumpFields()
+{
+    _jumpSpeed = -200.0f;
+    _onGround = true;
+    _gravity = 0.0f;
+}
+
+void Character::animateInAir(const Uint8 *keyState, float timeBetweenFrames)
+{
+    if ((keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_D]) || keyState[SDL_SCANCODE_D])
+    {
+        _cropRect.y = _spriteHeight;
+        _cropRect.x = 0;
+    }
+    else if ((keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_A]) || keyState[SDL_SCANCODE_A])
+    {
+        _cropRect.y = _spriteHeight * 2;
+        _cropRect.x = _spriteWidth;
+    }
+    else
+    {
         _cropRect.y = 0;
+        _cropRect.x = _spriteWidth;
     }
-    else if (keyStates[SDL_SCANCODE_A])
+}
+
+void Character::animateRunning(const Uint8 *keyState, bool isMoving, float timeBetweenFrames)
+{
+    _cropRect.h = _spriteHeight; //for cropping issues
+    
+    if (keyState[SDL_SCANCODE_A])
     {
-        if (_x - (_moveSpeed * deltaT) >= 0)
-        {
-            _x -= _moveSpeed * deltaT;
-        }
-        _playerRect.x = _x;
-        
+        //leftward animation
         _cropRect.y = _spriteHeight * 2;
     }
-    else if (keyStates[SDL_SCANCODE_D])
+    else if (keyState[SDL_SCANCODE_D])
     {
-        if ((_x + _playerRect.w) + _moveSpeed * deltaT <= WINDOW_WIDTH)
-        {
-            _x += _moveSpeed * deltaT;
-        }
-        _playerRect.x = _x;
-        
+        //rightward animation
         _cropRect.y = _spriteHeight;
     }
-    else
-    {
-        _isMoving = false;
-    }
     
-    if (_isMoving)
+    if (isMoving)
     {
-        _frameCounter += deltaT;
-        if (_frameCounter >= 0.15f)
+        _frameCount += timeBetweenFrames;
+        if (_frameCount >= 0.15)
         {
-            _frameCounter = 0;
+            _frameCount = 0;
             _cropRect.x += _spriteWidth;
             if (_cropRect.x >= _textureWidth)
             {
@@ -137,26 +175,78 @@ void Character::update(float deltaT)
     }
     else
     {
-        _frameCounter = 0;
+        _frameCount = 0;
+        
+        /* The leftward moving standstill frame is in the first column of the sprite sheet
+         while the rest of the standstill frames can be found in the second column of the 
+         sprite sheet */
+        
         if (_cropRect.y == _spriteHeight * 2)
         {
-            _cropRect.x = _textureWidth -_spriteWidth * 2;
+            _cropRect.x = 0;
+        }
+        else if (_cropRect.y == 0)
+        {
+            /* Fixes the cropping issues in the downward frames */
+            _cropRect.x = _spriteWidth;
+            _cropRect.h -= 20;
         }
         else
         {
-            _cropRect.x = _textureWidth - _spriteWidth;
+            _cropRect.x = _spriteWidth;
         }
-        
+    }
+
+}
+
+void Character::update(float timeBetweenFrames)
+{
+    bool isMoving = true;
+    
+    const Uint8 *keyState = getKeyState();
+    
+    if (keyState[SDL_SCANCODE_W] && _onGround)
+    {
+        //jump
+        _onGround = false;
+        _isJumping = true;
+    }
+    else if (keyState[SDL_SCANCODE_A])
+    {
+        //leftward movement
+        if (!offScreen_x(false, _groundMoveSpeed, timeBetweenFrames))
+        {
+            _x += -_groundMoveSpeed * timeBetweenFrames;
+            _spriteRect.x = _x;
+        }
+        animateRunning(keyState, isMoving, timeBetweenFrames);
+    }
+    else if (keyState[SDL_SCANCODE_D])
+    {
+        //rightward movement
+        if (!offScreen_x(true, _groundMoveSpeed, timeBetweenFrames))
+        {
+            _x : _x += _groundMoveSpeed * timeBetweenFrames;
+            _spriteRect.x = _x;
+        }
+        animateRunning(keyState, isMoving, timeBetweenFrames);
+    }
+    else
+    {
+        isMoving = false;
+        animateRunning(keyState, isMoving, timeBetweenFrames);
+    }
+    
+    if (!_onGround)
+    {
+        jump(timeBetweenFrames);
+        applyGravity(timeBetweenFrames);
     }
 }
 
-void Character::drawCharacter(SDL_Renderer *renderer)
+void Character::render(SDL_Renderer *renderer, float timeBetweenFrames)
 {
-    SDL_RenderCopy(renderer, _texture, &_cropRect, &_playerRect);
-}
-
-void Character::renderCharacter(SDL_Renderer *renderer, float deltaT)
-{
-    update(deltaT);
-    drawCharacter(renderer);
+    update(timeBetweenFrames);
+    SDL_RenderCopy(renderer, _spriteTexture, &_cropRect, &_spriteRect);
+    _livesText->renderText(renderer, 0, 0, 50, 50);
 }

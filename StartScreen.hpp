@@ -16,6 +16,10 @@ private:
     SDL_Texture *_sprite;
     SDL_Rect _cropRect;
     SDL_Rect _spriteRect;
+    SDL_Texture *_wizard;
+    SDL_Rect _enemyCropRect;
+    SDL_Rect _enemyRect;
+    
     float _spriteWidth;
     float _textureWidth;
     float _frameCount;

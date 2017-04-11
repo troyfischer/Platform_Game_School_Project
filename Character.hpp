@@ -20,7 +20,7 @@ private:
     float _inAirSpeed;
     bool _onGround;
     bool _isJumping;
-
+    
     /* Used during animation */
     float _frameCount;
     
@@ -35,6 +35,7 @@ private:
     void animateInAir(const Uint8 *keyState, float timeBetweenFrames);
     void animateRunning(const Uint8 *keyState, bool isMoving, float timeBetweenFrames);
     void update(float timeBetweenFrames) override;
+    void makesCollision(Enemy *e);
 public:
     Character(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY);
     void render(SDL_Renderer *renderer, float timeBetweenFrames) override;

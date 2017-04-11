@@ -38,7 +38,7 @@ const Uint8 * Character::getKeyState()
 
 void Character::jump(float timeBetweenFrames)
 {
-
+    
     const Uint8 *keyState = getKeyState();
     
     if (keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_D] && _isJumping)
@@ -178,7 +178,7 @@ void Character::animateRunning(const Uint8 *keyState, bool isMoving, float timeB
         _frameCount = 0;
         
         /* The leftward moving standstill frame is in the first column of the sprite sheet
-         while the rest of the standstill frames can be found in the second column of the 
+         while the rest of the standstill frames can be found in the second column of the
          sprite sheet */
         
         if (_cropRect.y == _spriteHeight * 2)
@@ -196,7 +196,7 @@ void Character::animateRunning(const Uint8 *keyState, bool isMoving, float timeB
             _cropRect.x = _spriteWidth;
         }
     }
-
+    
 }
 
 void Character::update(float timeBetweenFrames)
@@ -242,6 +242,18 @@ void Character::update(float timeBetweenFrames)
         jump(timeBetweenFrames);
         applyGravity(timeBetweenFrames);
     }
+}
+
+void Character::makesCollision(Enemy *e)
+{
+    /* Collisions will be circular based and use the pythagorean theorem
+     The method works as long as each sprite has an equivalent length and widths */
+    float distance = sqrtf(powf(_x_Origin - e->_x_Origin, 2.0f) + powf(_y_Origin - e->_spriteRect.y, 2.0f));
+    if (distance <= _radius + e->get_radius())
+    {
+        printf("Collision\n");
+    }
+    
 }
 
 void Character::render(SDL_Renderer *renderer, float timeBetweenFrames)

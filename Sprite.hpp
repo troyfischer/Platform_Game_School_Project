@@ -1,3 +1,4 @@
+
 #ifndef Sprite_hpp
 #define Sprite_hpp
 
@@ -44,10 +45,10 @@ private:
     void logSDL_Error(const std::string &msg);
     void logIMG_Error(const std::string &msg);
     void logTTF_Error(const std::string &msg);
-
+    
     /* Private constructor to keep Sprite from constructing itself */
     Sprite(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY);
-
+    
 public:
     ~Sprite();
     /* -----------------Collision necessary methods------------------------- */

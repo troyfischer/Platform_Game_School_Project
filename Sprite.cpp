@@ -100,3 +100,18 @@ void Sprite::logTTF_Error(const std::string &msg)
 {
     std::cerr << msg << " error: " << TTF_GetError() << std::endl;
 }
+
+float Sprite::get_radius()
+{
+    return _spriteWidth/2.0f;
+}
+
+float Sprite::get_x_Origin()
+{
+    return _x + get_radius();
+}
+
+float Sprite::get_y_Origin()
+{
+    return  _y + get_radius();
+}

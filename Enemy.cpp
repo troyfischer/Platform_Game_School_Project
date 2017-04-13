@@ -2,15 +2,26 @@
 #include "GameWindow.hpp"
 
 
-Enemy::Enemy(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY, int startXpos, int startYpos, bool moveVertically) : Sprite(renderer, textureFilePath, numFramesX, numFramesY), _moveVertically(moveVertically)
+Enemy::Enemy()
 {
-    _spriteRect.w = _spriteRect.h = 50;
-    _x = _spriteRect.x = startXpos;
-    _y = _spriteRect.y = startYpos;
+}
+
+void Enemy::init(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY,  bool moveVertically)
+{
+    initSprite(renderer, textureFilePath, numFramesX, numFramesY);
     
+    _spriteRect.w = _spriteRect.h = 50;
+    
+    _moveVertically = moveVertically;
     _maxMoveDistance = 100.0f;
     _distanceMoved = 0.0f;
-    _groundMoveSpeed = 100.0f;
+    _xVel = 100.0f;
+}
+
+void Enemy::setPos(int startXpos, int startYpos)
+{
+    _x = _spriteRect.x = startXpos;
+    _y = _spriteRect.y = startYpos;
 }
 
 void Enemy::moveVertically(float timeBetweenFrames)
@@ -19,10 +30,10 @@ void Enemy::moveVertically(float timeBetweenFrames)
     
     if (up)
     {
-        if (!offScreen_y(up, _groundMoveSpeed, timeBetweenFrames) && _distanceMoved <= _maxMoveDistance)
+        if (!offScreen_y(up, _xVel, timeBetweenFrames) && _distanceMoved <= _maxMoveDistance)
         {
-            _distanceMoved += _groundMoveSpeed * timeBetweenFrames;
-            _y += -_groundMoveSpeed * timeBetweenFrames;
+            _distanceMoved += _xVel * timeBetweenFrames;
+            _y += -_xVel * timeBetweenFrames;
             _spriteRect.y = _y;
         }
         else
@@ -33,10 +44,10 @@ void Enemy::moveVertically(float timeBetweenFrames)
     }
     else if (!up)
     {
-        if (!offScreen_y(false, _groundMoveSpeed, timeBetweenFrames) && _distanceMoved <= _maxMoveDistance)
+        if (!offScreen_y(false, _xVel, timeBetweenFrames) && _distanceMoved <= _maxMoveDistance)
         {
-            _distanceMoved += _groundMoveSpeed * timeBetweenFrames;
-            _y += _groundMoveSpeed * timeBetweenFrames;
+            _distanceMoved += _xVel * timeBetweenFrames;
+            _y += _xVel * timeBetweenFrames;
             _spriteRect.y = _y;
         }
         else
@@ -51,13 +62,14 @@ void Enemy::moveVertically(float timeBetweenFrames)
 void Enemy::moveHorizontally(float timeBetweenFrames)
 {
     static bool right = true;
-    
+    printf("%d, %d\n", _spriteRect.x, _spriteRect.y);
+    printf("%d, %d\n", _spriteRect.w, _spriteRect.h);
     if (right)
     {
-        if (!offScreen_x(right, _groundMoveSpeed, timeBetweenFrames) && _distanceMoved <= _maxMoveDistance)
+        if (!offScreen_x(right, _xVel, timeBetweenFrames) && _distanceMoved <= _maxMoveDistance)
         {
-            _distanceMoved += _groundMoveSpeed * timeBetweenFrames;
-            _x += -_groundMoveSpeed * timeBetweenFrames;
+            _distanceMoved += _xVel * timeBetweenFrames;
+            _x += -_xVel * timeBetweenFrames;
             _spriteRect.x = _x;
         }
         else
@@ -68,11 +80,12 @@ void Enemy::moveHorizontally(float timeBetweenFrames)
     }
     else if (!right)
     {
-        if (!offScreen_x(right, _groundMoveSpeed, timeBetweenFrames) && _distanceMoved <= _maxMoveDistance)
+        if (!offScreen_x(right, _xVel, timeBetweenFrames) && _distanceMoved <= _maxMoveDistance)
         {
-            _distanceMoved += _groundMoveSpeed * timeBetweenFrames;
-            _x += _groundMoveSpeed * timeBetweenFrames;
+            _distanceMoved += _xVel * timeBetweenFrames;
+            _x += _xVel * timeBetweenFrames;
             _spriteRect.x = _x;
+            
         }
         else
         {

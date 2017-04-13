@@ -18,9 +18,11 @@ private:
     /* ----------------------Movement methods------------------------- */
     void moveVertically(float timeBetweenFrames);
     void moveHorizontally(float timeBetweenFrames);
-    void update(float timeBetweenFrames) override;
+    void update(float timeBetweenFrames);
 public:
-    Enemy(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY, int startXPos, int startYPos, bool moveVertically);
+    Enemy();
+    void init(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY, bool moveVertically);
+    void setPos(int startXpos, int startYpos);
     void render(SDL_Renderer *renderer, float timeBetweenFrames) override;
 };
 

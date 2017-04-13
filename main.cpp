@@ -3,22 +3,25 @@
 
 int main(int argc, const char ** argv)
 {
-    GameWindow gameWindow("Dungeon Escape");
+    GameWindow game("Dungeon Escape");
     
-    StartScreen startScreen(gameWindow.getRenderer());
+    StartScreen startScreen(game.getRenderer());
     
-    Character *mainCharacter = new Character(gameWindow.getRenderer(), "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/SpriteSheet.png", 4, 4);
-    Sprite *enemy = new Enemy(gameWindow.getRenderer(), "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/enemyspritesheet.png", 1, 1, WINDOW_WIDTH/2, WINDOW_HEIGHT/2, false);
+    Map map;
+    map.initConstants(game.getRenderer());
+    map.loadMap1(game.getRenderer());
     
-    Platform plat;
-    plat.setPlatform(600, 600);
+    Enemy bad;
+    bad.init(game.getRenderer(), "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/enemyspritesheet.png", 1, 1, false);
+    bad.setPos(200, 200);
+
     float previousTick = 0.0f;
     float currentTick = 0.0f;
     float timeBetweenFrames = 0.0f; //will be in seconds
     SDL_Event e;
     
     /* Game loop */
-    while (gameWindow.isOpen())
+    while (game.isOpen())
     {
         /* Calculating time between each frame */
         previousTick = currentTick;
@@ -30,25 +33,24 @@ int main(int argc, const char ** argv)
         {
             if (e.type == SDL_QUIT)
             {
-                gameWindow.closeGameWindow();
+                game.closeGameWindow();
             }
         }
         
         if (!startScreen.getStart())
         {
-            startScreen.render(gameWindow.getRenderer(), timeBetweenFrames);
-            SDL_RenderPresent(gameWindow.getRenderer());
+            startScreen.render(game.getRenderer(), timeBetweenFrames);
+            SDL_RenderPresent(game.getRenderer());
+            SDL_RenderClear(game.getRenderer());
         }
         else
         {
-            gameWindow.renderBackground();
-            plat.show(gameWindow.getRenderer());
-            mainCharacter->render(gameWindow.getRenderer(), timeBetweenFrames, plat);
-            enemy->render(gameWindow.getRenderer(), timeBetweenFrames);
-            SDL_RenderPresent(gameWindow.getRenderer());
-            SDL_RenderClear(gameWindow.getRenderer());
+            map.showMap1(game.getRenderer(), timeBetweenFrames);
+            bad.render(game.getRenderer(), timeBetweenFrames);
+            SDL_RenderPresent(game.getRenderer());
+            SDL_RenderClear(game.getRenderer());
+            
         }
-        gameWindow.regulateFrameRate(currentTick);
     }
     
     

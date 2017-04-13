@@ -26,6 +26,8 @@ public:
     int getW();
     int getH();
     
+    SDL_Rect * getRect();
+    
     
 };
 

@@ -1,7 +1,17 @@
 #include "Sprite.hpp"
 #include "GameWindow.hpp"
 
-Sprite::Sprite(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY)
+Sprite::Sprite()
+{
+}
+
+Sprite::~Sprite()
+{
+    SDL_DestroyTexture(_spriteTexture);
+    _spriteTexture = NULL;
+}
+
+void Sprite::initSprite(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY)
 {
     _spriteTexture = NULL;
     _textureSurface = NULL;
@@ -46,12 +56,6 @@ Sprite::Sprite(SDL_Renderer *renderer, std::string textureFilePath, int numFrame
     /* The starting position will be set in the respective Character, Enemy or Item class */
 }
 
-Sprite::~Sprite()
-{
-    SDL_DestroyTexture(_spriteTexture);
-    _spriteTexture = NULL;
-}
-
 bool Sprite::offScreen_y(bool up, float speed, float timeBetweenFrames)
 {
     /* if up is true the check is for going off the top of the screen
@@ -85,7 +89,6 @@ bool Sprite::offScreen_x(bool right, float speed, float timeBetweenFrames)
     }
 }
 
-
 void Sprite::logSDL_Error(const std::string &msg)
 {
     std::cerr << msg << " error: " << SDL_GetError() << std::endl;
@@ -103,7 +106,7 @@ void Sprite::logTTF_Error(const std::string &msg)
 
 float Sprite::get_radius()
 {
-    return _spriteWidth/2.0f;
+    return _spriteRect.w/2.0f;
 }
 
 float Sprite::get_x_Origin()
@@ -115,3 +118,5 @@ float Sprite::get_y_Origin()
 {
     return  _y + get_radius();
 }
+
+int Sprite::getSpriteHeight() { return _spriteRect.h; }

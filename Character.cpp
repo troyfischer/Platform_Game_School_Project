@@ -1,134 +1,165 @@
 #include "Character.hpp"
 #include <sstream>
 
-Character::Character(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY) : Sprite(renderer, textureFilePath, numFramesX, numFramesY)
+Character::Character()
 {
+}
+
+void Character::init(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY)
+{
+    initSprite(renderer, textureFilePath, numFramesX, numFramesY);
+    
     /* Setting the size of the main character */
     _spriteRect.w = _spriteRect.h = 50;
     
-    /* Setting intital position of main character */
-    _x = _spriteRect.x = 0;
-    _y = _spriteRect.y = WINDOW_HEIGHT - _spriteRect.h;
-    
-    
     /* Setting attributes */
     _lives = 3;
-    _groundMoveSpeed = 100.0f;
+    _xVel = 100.0f;
     _inAirSpeed = 10.0f;
-    _gravity = 0.0f;
-    _jumpSpeed = -200.0f;
+    _gravity = 1.0f;
+    _yVel = -200.0f;
     _onGround = true;
     _isJumping = false;
-    _onPlatform = false;
+    _touchingPlatform = false;
+    _hitBottomOfPlatform = false;
+
     
     /* This portion will initialize the text on the screen that keeps the Character's lives */
     _livesText = NULL;
     std::stringstream textStream;
     textStream << "Lives: " << _lives;
     _livesText = new Text(renderer, textStream.str(), {0, 255, 255, 255},"/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 20);
-    
+
     _frameCount = 0;
+}
+
+void Character::initPos(int x, int y)
+{
+    /* Setting intital position of main character */
+    _x = _spriteRect.x = x;
+    _y = _spriteRect.y = y;
 }
 
 const Uint8 * Character::getKeyState()
 {
-    const Uint8 *keyState = SDL_GetKeyboardState(NULL);
-    
-    return keyState;
+    return SDL_GetKeyboardState(NULL);
 }
 
 void Character::jump(float timeBetweenFrames)
 {
-    
     const Uint8 *keyState = getKeyState();
-    
-    if (_jumpSpeed > _gravity && keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_D] && _isJumping)
+    if (!_hitBottomOfPlatform)
     {
-        animateInAir(keyState, timeBetweenFrames);
-        _y -= _jumpSpeed * timeBetweenFrames;
-        _jumpSpeed -= _gravity;
-        _spriteRect.y = _y;
-        if (!offScreen_x(true, _groundMoveSpeed, timeBetweenFrames))
+        if (keyState[SDL_SCANCODE_W] && _isJumping)
         {
-            _x += _inAirSpeed * timeBetweenFrames;
-            _spriteRect.x = _x;
+            _y += _yVel * timeBetweenFrames;
+            _spriteRect.y = _y;
         }
-    }
-    else if (_jumpSpeed > _gravity && keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_A] && _isJumping)
-    {
-        animateInAir(keyState, timeBetweenFrames);
-        _y -= _jumpSpeed * timeBetweenFrames;
-        _jumpSpeed -= _gravity;
-        _spriteRect.y = _y;
-        if (!offScreen_x(false, _groundMoveSpeed, timeBetweenFrames))
+        else
         {
-            _x += -_inAirSpeed * timeBetweenFrames;
-            _spriteRect.x = _x;
+            _isJumping = false;
         }
-    }
-    else if (_jumpSpeed > _gravity && keyState[SDL_SCANCODE_W] && _isJumping)
-    {
-        _y -= _jumpSpeed * timeBetweenFrames;
-        _jumpSpeed -= _gravity;
-        _spriteRect.y = _y;
     }
     else
     {
         _isJumping = false;
     }
-    
 }
 
-void Character::applyGravity(float timeBetweenFrames, Platform &platform)
+void Character::applyGravity(float timeBetweenFrames, std::vector<Platform> &platforms)
 {
-    const Uint8 *keyState = getKeyState();
-    
-    if (keyState[SDL_SCANCODE_D])
-    {
-        animateInAir(keyState, timeBetweenFrames);
-        if (!offScreen_x(true, _groundMoveSpeed, timeBetweenFrames))
-        {
-            _x += _inAirSpeed * timeBetweenFrames;
-            _spriteRect.x = _x;
-        }
-    }
-    else if (keyState[SDL_SCANCODE_A])
-    {
-        animateInAir(keyState, timeBetweenFrames);
-        if (!offScreen_x(false, _groundMoveSpeed, timeBetweenFrames))
-        {
-            _x += -_inAirSpeed * timeBetweenFrames;
-            _spriteRect.x = _x;
-        }
-    }
-    if (_isJumping && !offScreen_y(false, _gravity, timeBetweenFrames))
-    {
-        _y += _gravity * timeBetweenFrames;
-        _spriteRect.y = _y;
-        _gravity += 2.0f;
-    }
-    else if (!offScreen_y(false, _gravity, timeBetweenFrames))
-    {
-        _y += _gravity * timeBetweenFrames;
-        _spriteRect.y = _y;
-        _gravity += 42;
-    }
-    else
-    {
-        resetJumpFields();
-    }
-    if (collisionOverPlatform(platform))
-    {
-        _onPlatform = true;
-    }
+    /* The purpose of gravity is to cause the _yVel to eventually be positive and 
+     bring the character down */
+    _gravity += 1;
 }
 
 void Character::resetJumpFields()
 {
-    _jumpSpeed = 500.0f;
+    _yVel = -200.0f;
     _onGround = true;
-    _gravity = 2.0f;
+    _gravity = 1.0f;
 }
+
+void Character::update(float timeBetweenFrames, std::vector<Platform> &platforms)
+{
+    isCharacterOnPlatform(platforms);
+    
+    if (!_touchingPlatform)
+    {
+        _onGround = false;
+        collisionUnderPlatform(platforms);
+        applyGravity(timeBetweenFrames, platforms);
+        _y += _gravity * timeBetweenFrames;
+        _spriteRect.y = _y;
+        if (_spriteRect.y > WINDOW_HEIGHT)
+        {
+            reset(platforms.at(0));
+            resetJumpFields();
+        }
+    }
+    else
+    {
+        if (!_isJumping)
+        {
+            
+            if ((_y + getSpriteHeight()) + _gravity * timeBetweenFrames < _currentPlatform.getY())
+            {
+                applyGravity(timeBetweenFrames, platforms);
+                _y += _gravity * timeBetweenFrames;
+                _spriteRect.y = _y;
+            }
+            else
+            {
+                resetJumpFields();
+            }
+        }
+    }
+    
+    
+    bool isMoving = true;
+    
+    const Uint8 *keyState = getKeyState();
+    
+    if (keyState[SDL_SCANCODE_W] && _onGround)
+    {
+        //jump
+        _onGround = false;
+        _isJumping = true;
+    }
+    else if (keyState[SDL_SCANCODE_A])
+    {
+        //leftward movement
+        if (!offScreen_x(false, _xVel, timeBetweenFrames))
+        {
+            _x += -_xVel * timeBetweenFrames;
+            _spriteRect.x = _x;
+        }
+        animateRunning(keyState, isMoving, timeBetweenFrames);
+    }
+    else if (keyState[SDL_SCANCODE_D])
+    {
+        //rightward movement
+        if (!offScreen_x(true, _xVel, timeBetweenFrames))
+        {
+            _x += _xVel * timeBetweenFrames;
+            _spriteRect.x = _x;
+        }
+        animateRunning(keyState, isMoving, timeBetweenFrames);
+    }
+    else
+    {
+        isMoving = false;
+        animateRunning(keyState, isMoving, timeBetweenFrames);
+    }
+    
+    if (!_onGround)
+    {
+        jump(timeBetweenFrames);
+    }
+    _touchingPlatform = false;
+    _hitBottomOfPlatform = false;
+}
+
 void Character::animateInAir(const Uint8 *keyState, float timeBetweenFrames)
 {
     if ((keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_D]) || keyState[SDL_SCANCODE_D])
@@ -202,90 +233,71 @@ void Character::animateRunning(const Uint8 *keyState, bool isMoving, float timeB
     
 }
 
-void Character::update(float timeBetweenFrames)
-{
-    
-}
-
-void Character::update(float timeBetweenFrames, Platform &platform)
-{
-    bool isMoving = true;
-    
-    const Uint8 *keyState = getKeyState();
-    
-    if (keyState[SDL_SCANCODE_W] && _onGround)
-    {
-        //jump
-        _onGround = false;
-        _isJumping = true;
-    }
-    else if (keyState[SDL_SCANCODE_A])
-    {
-        //leftward movement
-        if (!offScreen_x(false, _groundMoveSpeed, timeBetweenFrames))
-        {
-            _x += -_groundMoveSpeed * timeBetweenFrames;
-            _spriteRect.x = _x;
-        }
-        animateRunning(keyState, isMoving, timeBetweenFrames);
-    }
-    else if (keyState[SDL_SCANCODE_D])
-    {
-        //rightward movement
-        if (!offScreen_x(true, _groundMoveSpeed, timeBetweenFrames))
-        {
-            _x += _groundMoveSpeed * timeBetweenFrames;
-            _spriteRect.x = _x;
-        }
-        animateRunning(keyState, isMoving, timeBetweenFrames);
-    }
-    else
-    {
-        isMoving = false;
-        animateRunning(keyState, isMoving, timeBetweenFrames);
-    }
-    
-    if (!_onGround)
-    {
-        jump(timeBetweenFrames);
-        applyGravity(timeBetweenFrames, platform);
-    }
-}
-
-void Character::makesCollision(Enemy *e)
+void Character::makesCollision(Enemy &e)
 {
     /* Collisions will be circular based and use the pythagorean theorem
      The method works as long as each sprite has an equivalent length and widths */
-    float distance = sqrtf(powf(_x_Origin - e->_x_Origin, 2.0f) + powf(_y_Origin - e->_spriteRect.y, 2.0f));
-    if (distance <= _radius + e->get_radius())
+    
+    float distance = sqrtf(powf(_x_Origin - e._x_Origin, 2.0f) + powf(_y_Origin - e._spriteRect.y, 2.0f));
+    if (distance <= _radius + e.get_radius())
     {
         printf("Collision\n");
     }
     
 }
 
-void Character::collisionUnderPlatform(Platform &platform)
+void Character::collisionUnderPlatform(std::vector<Platform> &platforms)
 {
-    
-}
-
-bool Character::collisionOverPlatform(Platform &platform)
-{
-    if (_spriteRect.y + _spriteRect.h <= platform.getY() && _spriteRect.x >= platform.getX())
+    std::vector<Platform>::iterator iter;
+    for (iter = platforms.begin(); iter != platforms.end(); ++iter)
     {
-        return true;
+        if (iter->getX() != _currentPlatform.getX() || iter->getY() != _currentPlatform.getY())
+        {
+            if (_y + _spriteRect.h >= iter->getY() + iter->getH())
+            {
+                if (_x + _spriteRect.w >= iter->getX() && _x <= iter->getX() + iter->getW())
+                {
+                    if (_y <= iter->getY() + iter->getH())
+                    {
+                        _hitBottomOfPlatform = true;
+                        break;
+                    }
+                }
+            }
+        }
     }
-    return false;
 }
 
-void Character::render(SDL_Renderer *renderer, float timeBetweenFrames, Platform &platform)
+void Character::isCharacterOnPlatform(std::vector<Platform> &platforms)
 {
-    update(timeBetweenFrames, platform);
-    SDL_RenderCopy(renderer, _spriteTexture, &_cropRect, &_spriteRect);
-    _livesText->renderText(renderer, 0, 0, 50, 50);
+    std::vector<Platform>::iterator iter;
+    for (iter = platforms.begin(); iter != platforms.end(); ++iter)
+    {
+        if (get_x_Origin() + _spriteRect.w/4 >= iter->getX() && get_x_Origin() - _spriteRect.w/4 <= iter->getX() + iter->getW())
+        {
+            if (_y + getSpriteHeight() <= iter->getY() + buffer && _y + getSpriteHeight() >= iter->getY() - buffer)
+            {
+                _touchingPlatform = true;
+                _currentPlatform = *iter;
+                break; //break the loop
+            }
+        }
+    }
 }
 
 void Character::render(SDL_Renderer *renderer, float timeBetweenFrames)
 {
-    
+    SDL_RenderCopy(renderer, _spriteTexture, &_cropRect, &_spriteRect);
+    _livesText->renderText(renderer, 0, 0, 50, 50);
 }
+
+
+void Character::reset(Platform &start)
+{
+    _x = _spriteRect.x = start.getX();
+    _y = _spriteRect.y = start.getY() - _spriteRect.h;
+    _cropRect.y = _spriteHeight;
+    _cropRect.x = _spriteWidth;
+}
+
+

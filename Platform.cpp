@@ -24,3 +24,4 @@ int Platform::getY() { return _platform.y; }
 int Platform::getW() { return _platform.w; }
 int Platform::getH() { return _platform.h; }
 
+SDL_Rect * Platform::getRect() { return &_platform; }

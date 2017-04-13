@@ -34,23 +34,22 @@ private:
     float _radius; //for circular based collisions
     
     /* ---------------------Attribute fields--------------------------- */
-    float _groundMoveSpeed; //move speed
+    float _xVel; //move speed
     
     /* --------------------Private methods------------------------------ */
     bool offScreen_y(bool up, float speed, float timeBetweenFrames);
     bool offScreen_x(bool right, float speed, float timeBetweenFrames);
-    virtual void update(float timeBetweenFrames) = 0; //each friend class will update differently
-    
+        
     /* -----------------Error logging funcitons------------------------- */
     void logSDL_Error(const std::string &msg);
     void logIMG_Error(const std::string &msg);
     void logTTF_Error(const std::string &msg);
     
     /* Private constructor to keep Sprite from constructing itself */
-    Sprite(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY);
-    
+    Sprite();
 public:
     ~Sprite();
+    void initSprite(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY);
     /* -----------------Collision necessary methods------------------------- */
     float get_x_Origin();
     float get_y_Origin();
@@ -58,6 +57,8 @@ public:
     
     /* -------------------Display method------------------------------------- */
     virtual void render(SDL_Renderer *renderer, float timeBetweenFrames) = 0; //each friend class will have it's own render method
+    
+    int getSpriteHeight();
 };
 
 #endif /* Sprite_hpp */

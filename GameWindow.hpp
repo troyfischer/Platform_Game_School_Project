@@ -8,8 +8,8 @@
 #include <SDL2_ttf/SDL_ttf.h>
 #include <SDL2_mixer/SDL_mixer.h>
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
+#define WINDOW_WIDTH 1080
+#define WINDOW_HEIGHT 640
 
 class GameWindow
 {

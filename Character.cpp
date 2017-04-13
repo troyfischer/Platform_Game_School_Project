@@ -19,6 +19,7 @@ Character::Character(SDL_Renderer *renderer, std::string textureFilePath, int nu
     _jumpSpeed = -200.0f;
     _onGround = true;
     _isJumping = false;
+    _onPlatform = false;
     
     /* This portion will initialize the text on the screen that keeps the Character's lives */
     _livesText = NULL;
@@ -41,11 +42,11 @@ void Character::jump(float timeBetweenFrames)
     
     const Uint8 *keyState = getKeyState();
     
-    if (keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_D] && _isJumping)
+    if (_jumpSpeed > _gravity && keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_D] && _isJumping)
     {
         animateInAir(keyState, timeBetweenFrames);
-        _y += _jumpSpeed * timeBetweenFrames;
-        _jumpSpeed += 2.0f;
+        _y -= _jumpSpeed * timeBetweenFrames;
+        _jumpSpeed -= _gravity;
         _spriteRect.y = _y;
         if (!offScreen_x(true, _groundMoveSpeed, timeBetweenFrames))
         {
@@ -53,11 +54,11 @@ void Character::jump(float timeBetweenFrames)
             _spriteRect.x = _x;
         }
     }
-    else if (keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_A] && _isJumping)
+    else if (_jumpSpeed > _gravity && keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_A] && _isJumping)
     {
         animateInAir(keyState, timeBetweenFrames);
-        _y += _jumpSpeed * timeBetweenFrames;
-        _jumpSpeed += 2.0f;
+        _y -= _jumpSpeed * timeBetweenFrames;
+        _jumpSpeed -= _gravity;
         _spriteRect.y = _y;
         if (!offScreen_x(false, _groundMoveSpeed, timeBetweenFrames))
         {
@@ -65,10 +66,10 @@ void Character::jump(float timeBetweenFrames)
             _spriteRect.x = _x;
         }
     }
-    else if (keyState[SDL_SCANCODE_W] && _isJumping)
+    else if (_jumpSpeed > _gravity && keyState[SDL_SCANCODE_W] && _isJumping)
     {
-        _y += _jumpSpeed * timeBetweenFrames;
-        _jumpSpeed += 2.0f;
+        _y -= _jumpSpeed * timeBetweenFrames;
+        _jumpSpeed -= _gravity;
         _spriteRect.y = _y;
     }
     else
@@ -78,7 +79,7 @@ void Character::jump(float timeBetweenFrames)
     
 }
 
-void Character::applyGravity(float timeBetweenFrames)
+void Character::applyGravity(float timeBetweenFrames, Platform &platform)
 {
     const Uint8 *keyState = getKeyState();
     
@@ -100,7 +101,6 @@ void Character::applyGravity(float timeBetweenFrames)
             _spriteRect.x = _x;
         }
     }
-    
     if (_isJumping && !offScreen_y(false, _gravity, timeBetweenFrames))
     {
         _y += _gravity * timeBetweenFrames;
@@ -111,21 +111,24 @@ void Character::applyGravity(float timeBetweenFrames)
     {
         _y += _gravity * timeBetweenFrames;
         _spriteRect.y = _y;
-        _gravity += 1.0f;
+        _gravity += 42;
     }
     else
     {
         resetJumpFields();
     }
+    if (collisionOverPlatform(platform))
+    {
+        _onPlatform = true;
+    }
 }
 
 void Character::resetJumpFields()
 {
-    _jumpSpeed = -200.0f;
+    _jumpSpeed = 500.0f;
     _onGround = true;
-    _gravity = 0.0f;
+    _gravity = 2.0f;
 }
-
 void Character::animateInAir(const Uint8 *keyState, float timeBetweenFrames)
 {
     if ((keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_D]) || keyState[SDL_SCANCODE_D])
@@ -201,6 +204,11 @@ void Character::animateRunning(const Uint8 *keyState, bool isMoving, float timeB
 
 void Character::update(float timeBetweenFrames)
 {
+    
+}
+
+void Character::update(float timeBetweenFrames, Platform &platform)
+{
     bool isMoving = true;
     
     const Uint8 *keyState = getKeyState();
@@ -226,7 +234,7 @@ void Character::update(float timeBetweenFrames)
         //rightward movement
         if (!offScreen_x(true, _groundMoveSpeed, timeBetweenFrames))
         {
-            _x : _x += _groundMoveSpeed * timeBetweenFrames;
+            _x += _groundMoveSpeed * timeBetweenFrames;
             _spriteRect.x = _x;
         }
         animateRunning(keyState, isMoving, timeBetweenFrames);
@@ -240,7 +248,7 @@ void Character::update(float timeBetweenFrames)
     if (!_onGround)
     {
         jump(timeBetweenFrames);
-        applyGravity(timeBetweenFrames);
+        applyGravity(timeBetweenFrames, platform);
     }
 }
 
@@ -256,9 +264,28 @@ void Character::makesCollision(Enemy *e)
     
 }
 
-void Character::render(SDL_Renderer *renderer, float timeBetweenFrames)
+void Character::collisionUnderPlatform(Platform &platform)
 {
-    update(timeBetweenFrames);
+    
+}
+
+bool Character::collisionOverPlatform(Platform &platform)
+{
+    if (_spriteRect.y + _spriteRect.h <= platform.getY() && _spriteRect.x >= platform.getX())
+    {
+        return true;
+    }
+    return false;
+}
+
+void Character::render(SDL_Renderer *renderer, float timeBetweenFrames, Platform &platform)
+{
+    update(timeBetweenFrames, platform);
     SDL_RenderCopy(renderer, _spriteTexture, &_cropRect, &_spriteRect);
     _livesText->renderText(renderer, 0, 0, 50, 50);
+}
+
+void Character::render(SDL_Renderer *renderer, float timeBetweenFrames)
+{
+    
 }

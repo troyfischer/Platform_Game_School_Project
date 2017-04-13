@@ -30,7 +30,7 @@ Text::Text(SDL_Renderer *renderer, std::string msg, SDL_Color color, std::string
         }
         SDL_FreeSurface(_textSurface);
     }
-
+    
 }
 
 Text::~Text()
@@ -72,5 +72,3 @@ int Text::getTextHeight()
 {
     return _textHeight;
 }
-
-

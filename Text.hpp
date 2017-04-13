@@ -1,4 +1,3 @@
-
 #ifndef Text_hpp
 #define Text_hpp
 

@@ -59,12 +59,12 @@ bool Sprite::offScreen_y(bool up, float speed, float timeBetweenFrames)
     
     if (up)
     {
-        return _y + (-speed * timeBetweenFrames) <= 0 ? true : false;
+        return _y + (-speed * timeBetweenFrames) <= 0;
         
     }
     else
     {
-        return (_y + _spriteRect.h) + (speed * timeBetweenFrames) >= WINDOW_HEIGHT ? true : false;
+        return (_y + _spriteRect.h) + (speed * timeBetweenFrames) >= WINDOW_HEIGHT;
     }
 }
 

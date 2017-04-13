@@ -7,9 +7,11 @@ int main(int argc, const char ** argv)
     
     StartScreen startScreen(gameWindow.getRenderer());
     
-    Sprite *mainCharacter = new Character(gameWindow.getRenderer(), "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/SpriteSheet.png", 4, 4);
+    Character *mainCharacter = new Character(gameWindow.getRenderer(), "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/SpriteSheet.png", 4, 4);
     Sprite *enemy = new Enemy(gameWindow.getRenderer(), "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/enemyspritesheet.png", 1, 1, WINDOW_WIDTH/2, WINDOW_HEIGHT/2, false);
     
+    Platform plat;
+    plat.setPlatform(600, 600);
     float previousTick = 0.0f;
     float currentTick = 0.0f;
     float timeBetweenFrames = 0.0f; //will be in seconds
@@ -40,7 +42,8 @@ int main(int argc, const char ** argv)
         else
         {
             gameWindow.renderBackground();
-            mainCharacter->render(gameWindow.getRenderer(), timeBetweenFrames);
+            plat.show(gameWindow.getRenderer());
+            mainCharacter->render(gameWindow.getRenderer(), timeBetweenFrames, plat);
             enemy->render(gameWindow.getRenderer(), timeBetweenFrames);
             SDL_RenderPresent(gameWindow.getRenderer());
             SDL_RenderClear(gameWindow.getRenderer());

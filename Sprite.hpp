@@ -14,6 +14,7 @@ class Sprite
 {
     friend class Enemy;
     friend class Character;
+    friend class Item;
     
 private:
     /* ----------------------SDL fields----------------------------- */
@@ -23,20 +24,19 @@ private:
     SDL_Surface *_textureSurface;
     
     /* -----------------Sprite Sheet cropping fields------------------ */
-    float _spriteWidth;
-    float _spriteHeight;
-    float _textureWidth;
-    float _textureHeight;
+    int _spriteWidth;
+    int _spriteHeight;
+    int _textureWidth;
+    int _textureHeight;
     
     /* ----------------------Position fields------------------------- */
     float _x, _y; //to handle movement more fluidly
-    float _x_Origin, _y_Origin; //for circular based collisions
-    float _radius; //for circular based collisions
     
     /* ---------------------Attribute fields--------------------------- */
-    float _xVel; //move speed
+    float _xVel; //x move speed
+    float _yVel; //y move speed
     
-    /* --------------------Private methods------------------------------ */
+    /* Checks to ensure the sprite stays within the bounds of the screen */
     bool offScreen_y(bool up, float speed, float timeBetweenFrames);
     bool offScreen_x(bool right, float speed, float timeBetweenFrames);
         
@@ -48,17 +48,21 @@ private:
     /* Private constructor to keep Sprite from constructing itself */
     Sprite();
 public:
+    /* Destructor */
     ~Sprite();
+    
+    /* Initialization */
     void initSprite(SDL_Renderer *renderer, std::string textureFilePath, int numFramesX, int numFramesY);
-    /* -----------------Collision necessary methods------------------------- */
+    
+    /* ----------------------Display method------------------------------------- */
+    void render(SDL_Renderer *renderer); //each friend class will have it's own render method
+    
+    /*-----------------Setters and Getters--------------------*/
     float get_x_Origin();
     float get_y_Origin();
     float get_radius();
-    
-    /* -------------------Display method------------------------------------- */
-    virtual void render(SDL_Renderer *renderer, float timeBetweenFrames) = 0; //each friend class will have it's own render method
-    
     int getSpriteHeight();
+    int getSpriteWidth();
 };
 
 #endif /* Sprite_hpp */

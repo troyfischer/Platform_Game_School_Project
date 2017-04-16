@@ -3,7 +3,6 @@
 GameWindow::GameWindow(std::string title)
 {
     _window = NULL;
-    _background = NULL;
     _renderer = NULL;
     
     _open = true;
@@ -60,23 +59,30 @@ GameWindow::GameWindow(std::string title)
         logSDLError("SDL_CreateRenderer");
         _open = false;
     }
-    
-    /* Load Background */
-    _background = IMG_LoadTexture(_renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/background.jpg");
-    
 }
 
 GameWindow::~GameWindow()
 {
+    //Quit all subsystems
     SDL_DestroyWindow(_window);
     SDL_DestroyRenderer(_renderer);
-    SDL_DestroyTexture(_background);
     SDL_Quit();
     
     TTF_Quit();
     
     IMG_Quit();
+    
+    Mix_Quit();
 }
+
+void GameWindow::logSDLError(const std::string &msg)
+{ std::cerr << msg << " error: " << SDL_GetError() << std::endl; }
+
+void GameWindow::logIMGError(const std::string &msg)
+{ std::cerr << msg << " error: " << IMG_GetError() << std::endl; }
+
+void GameWindow::logTTFError(const std::string &msg)
+{ std::cerr << msg << " error: " << TTF_GetError() << std::endl; }
 
 SDL_Renderer * GameWindow::getRenderer()
 {
@@ -91,37 +97,4 @@ bool GameWindow::isOpen()
 void GameWindow::closeGameWindow()
 {
     _open = false;
-}
-
-void GameWindow::renderBackground()
-{
-    SDL_RenderCopy(_renderer, _background, NULL, NULL);
-}
-
-void GameWindow::regulateFrameRate(float start_tick)
-{
-    float fps = 60.0f;
-    float one_second = 1000.0f;
-    
-    if ((one_second / fps) > (SDL_GetTicks() - start_tick))
-    {
-        SDL_Delay((one_second / fps) - (SDL_GetTicks() - start_tick));
-    }
-}
-
-//private member functions
-
-void GameWindow::logSDLError(const std::string &msg)
-{
-    std::cerr << msg << " error: " << SDL_GetError() << std::endl;
-}
-
-void GameWindow::logIMGError(const std::string &msg)
-{
-    std::cerr << msg << " error: " << IMG_GetError() << std::endl;
-}
-
-void GameWindow::logTTFError(const std::string &msg)
-{
-    std::cerr << msg << " error: " << TTF_GetError() << std::endl;
 }

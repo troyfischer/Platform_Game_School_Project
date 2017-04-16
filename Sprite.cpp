@@ -64,7 +64,6 @@ bool Sprite::offScreen_y(bool up, float speed, float timeBetweenFrames)
     if (up)
     {
         return _y + (-speed * timeBetweenFrames) <= 0;
-        
     }
     else
     {
@@ -80,43 +79,30 @@ bool Sprite::offScreen_x(bool right, float speed, float timeBetweenFrames)
     if (right)
     {
         //right side
-        return (_x + _spriteRect.w) + (speed * timeBetweenFrames) >= WINDOW_WIDTH ? true : false;
+        return (_x + _spriteRect.w) + (speed * timeBetweenFrames) >= WINDOW_WIDTH;
     }
     else
     {
         //left side
-        return _x + (-speed * timeBetweenFrames) <= 0 ? true : false;
+        return _x + (-speed * timeBetweenFrames) <= 0;
     }
 }
 
 void Sprite::logSDL_Error(const std::string &msg)
-{
-    std::cerr << msg << " error: " << SDL_GetError() << std::endl;
-}
+{ std::cerr << msg << " error: " << SDL_GetError() << std::endl; }
 
 void Sprite::logIMG_Error(const std::string &msg)
-{
-    std::cerr << msg << " error: " << IMG_GetError() << std::endl;
-}
+{ std::cerr << msg << " error: " << IMG_GetError() << std::endl; }
 
 void Sprite::logTTF_Error(const std::string &msg)
-{
-    std::cerr << msg << " error: " << TTF_GetError() << std::endl;
-}
+{ std::cerr << msg << " error: " << TTF_GetError() << std::endl; }
 
-float Sprite::get_radius()
-{
-    return _spriteRect.w/2.0f;
-}
+void Sprite::render(SDL_Renderer *renderer)
+{ SDL_RenderCopy(renderer, _spriteTexture, &_cropRect, &_spriteRect); }
 
-float Sprite::get_x_Origin()
-{
-    return _x + get_radius();
-}
-
-float Sprite::get_y_Origin()
-{
-    return  _y + get_radius();
-}
-
-int Sprite::getSpriteHeight() { return _spriteRect.h; }
+//Setters and Getters
+float Sprite::get_radius() { return _spriteRect.w/2.0f; }
+float Sprite::get_x_Origin() { return _x + get_radius(); }
+float Sprite::get_y_Origin() { return  _y + get_radius(); }
+int Sprite::getSpriteHeight() { return  _spriteRect.h; }
+int Sprite::getSpriteWidth() { return  _spriteRect.w; }

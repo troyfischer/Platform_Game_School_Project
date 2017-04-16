@@ -14,7 +14,7 @@ StartScreen::StartScreen(SDL_Renderer *renderer)
     
     /* Initialize sprite */
     SDL_Surface *tempSurface = NULL;
-    tempSurface = IMG_Load("/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/SpriteSheet.png");
+    tempSurface = IMG_Load("/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/characterSprite.png");
     if (!tempSurface)
     {
         printf("IMG_Load error: %s\n", IMG_GetError());
@@ -34,6 +34,7 @@ StartScreen::StartScreen(SDL_Renderer *renderer)
     }
     
     _textureWidth = _cropRect.w;
+    /* _cropRect is hard coded because the sprite sheet used is always the same */
     _cropRect.w /= 4;
     _cropRect.h /= 4;
     _cropRect.x = 0;
@@ -84,22 +85,31 @@ void StartScreen::animate(float timeBetweenFrames)
 void StartScreen::render(SDL_Renderer *renderer, float timeBetweenFrames)
 {
     startGame();
+    
+    //fill the background
     _background = {0,0,WINDOW_WIDTH,WINDOW_HEIGHT};
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(renderer, &_background);
-    int w = 150;
-    int h = 30;
-    _title->renderText(renderer, WINDOW_WIDTH/2 - 150, WINDOW_HEIGHT - 350, 300, 200);
+    
+    //render the text
+    int w = 150, h = 30;
+    _title->renderText(renderer, WINDOW_WIDTH/2 - 250, 100, 500, 200);
     _controls->renderText(renderer, 10, 0, w, 50);
     _W->renderText(renderer, 10, 50, w, h);
     _D->renderText(renderer, 10, 50+h, w, h);
     _A->renderText(renderer, 10, 50+2*h, w, h);
-    _pressSpaceText->renderText(renderer, WINDOW_WIDTH/2 - 150, WINDOW_HEIGHT - 150, 300, 150);
+    _pressSpaceText->renderText(renderer, WINDOW_WIDTH/2 - 200, WINDOW_HEIGHT/2, 400, 200);
+    
+    //animate sprite
     animate(timeBetweenFrames);
+    
+    //add the sprite to be rendered
     SDL_RenderCopy(renderer, _sprite, &_cropRect, &_spriteRect);
+    
+    SDL_RenderPresent(renderer);
+    SDL_RenderClear(renderer);
 }
 
-bool StartScreen::getStart()
-{
-    return _start;
-}
+//Setters and Getters
+bool StartScreen::getStart() { return _start; }
+void StartScreen::canStart() { _start = false; }

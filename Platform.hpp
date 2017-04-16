@@ -1,11 +1,3 @@
-//
-//  Platform.hpp
-//  Platformer
-//
-//  Created by Troy Fischer on 4/12/17.
-//  Copyright © 2017 Troy Fischer. All rights reserved.
-//
-
 #ifndef Platform_hpp
 #define Platform_hpp
 
@@ -16,15 +8,18 @@ class Platform
 {
 private:
     SDL_Rect _platform;
+    int _levelID;
 public:
     Platform();
-    void setPlatform(int x, int y);
+    ~Platform();
+    void setPlatform(int x, int y, int w, int level);
     void show(SDL_Renderer *renderer);
     
     int getX();
     int getY();
     int getW();
     int getH();
+    int getLevelID();
     
     SDL_Rect * getRect();
     

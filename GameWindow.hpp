@@ -8,30 +8,38 @@
 #include <SDL2_ttf/SDL_ttf.h>
 #include <SDL2_mixer/SDL_mixer.h>
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
+#define WINDOW_WIDTH 1000
+#define WINDOW_HEIGHT 650
 
 class GameWindow
 {
+    /* The class is responsible for the opening and closing of the window
+     and stores the renderer used throughout the project */
+    
+    /* The frame rate is regulated through vsync which is why there is no
+     method to manually regulate the frame rate */
 private:
+    /*------------------SDL_Fields------------------*/
     SDL_Window *_window;
     SDL_Renderer *_renderer;
-    SDL_Texture *_background;
-    SDL_Rect _backgroundRect;
+    
+    /* Holds the open status of the window */
     bool _open;
+    
 public:
+    /*-------------Constructor/Destructor------------------*/
     GameWindow(std::string title);
     ~GameWindow();
-    SDL_Renderer * getRenderer();
     
+    /*-----------------Error Loggging--------------------*/
     static void logSDLError(const std::string &msg);
     static void logIMGError(const std::string &msg);
     static void logTTFError(const std::string &msg);
     
+    /*--------------Setters and Getters--------------------*/
+    SDL_Renderer * getRenderer();
     bool isOpen();
     void closeGameWindow();
-    void renderBackground();
-    void regulateFrameRate(float start_tick);
 };
 
 #endif /* GameWindow_hpp */

@@ -7,5 +7,8 @@
 #include "Sprite.hpp"
 #include "Text.hpp"
 #include "StartScreen.hpp"
+#include "Platform.hpp"
+#include "Map.hpp"
+#include "LoseScreen.hpp"
 
 #endif /* header_h */

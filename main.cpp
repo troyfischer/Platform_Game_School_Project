@@ -1,19 +1,25 @@
+
+/* **********This project does not own any of the images or sounds used in it************* */
+/* All images and sounds were used for educational purposes as the project will not be distributed */
+
 #include <stdio.h>
-#include "header.h"
+#include <vector>
+#include "Character.hpp"
+#include "Enemy.hpp"
+#include "GameWindow.hpp"
+#include "Sprite.hpp"
+#include "Text.hpp"
+#include "StartScreen.hpp"
+#include "Platform.hpp"
+#include "Map.hpp"
+#include "LoseScreen.hpp"
 
 int main(int argc, const char ** argv)
 {
     GameWindow game("Dungeon Escape");
     
-    StartScreen startScreen(game.getRenderer());
-    
     Map map;
-    map.initConstants(game.getRenderer());
-    map.loadMap1(game.getRenderer());
-    
-    Enemy bad;
-    bad.init(game.getRenderer(), "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/enemyspritesheet.png", 1, 1, false);
-    bad.setPos(200, 200);
+    map.init(game.getRenderer());
 
     float previousTick = 0.0f;
     float currentTick = 0.0f;
@@ -29,7 +35,7 @@ int main(int argc, const char ** argv)
         timeBetweenFrames = (currentTick - previousTick) / 1000.0f;
         
         /* Event loop */
-        while (SDL_PollEvent(&e))
+        while (SDL_PollEvent(&e) != 0)
         {
             if (e.type == SDL_QUIT)
             {
@@ -37,22 +43,21 @@ int main(int argc, const char ** argv)
             }
         }
         
-        if (!startScreen.getStart())
+        if (!map.shouldShowStartScreen(game.getRenderer(), timeBetweenFrames))
         {
-            startScreen.render(game.getRenderer(), timeBetweenFrames);
-            SDL_RenderPresent(game.getRenderer());
-            SDL_RenderClear(game.getRenderer());
-        }
-        else
-        {
-            map.showMap1(game.getRenderer(), timeBetweenFrames);
-            bad.render(game.getRenderer(), timeBetweenFrames);
-            SDL_RenderPresent(game.getRenderer());
-            SDL_RenderClear(game.getRenderer());
+            /* If the game has started load the map
+             The method has checks within it to make sure it only happens once */
             
+            map.load(game.getRenderer());
         }
+        if (!map.shouldShowLoseScreen(game.getRenderer()) && !map.shouldShowWinScreen(game.getRenderer()))
+        {
+            /* if the game has started, the character's lives != 0
+             and the current map != 4 then show the map */
+            
+            map.show(game.getRenderer(), timeBetweenFrames);
+        }        
+        
     }
-    
-    
     return 0;
 }

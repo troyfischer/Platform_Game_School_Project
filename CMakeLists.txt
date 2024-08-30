@@ -6,6 +6,7 @@ if(APPLE AND CMAKE_SYSTEM_PROCESSOR MATCHES "arm64")
     set(CMAKE_OSX_ARCHITECTURES "arm64")  # Ensures CMake builds for Apple Silicon
 endif()
 
+
 # Set the project name
 project(Platformer)
 
@@ -16,6 +17,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Add Homebrew library paths
 set(CMAKE_PREFIX_PATH "/opt/homebrew")
+
+include_directories(include)
 
 # Find SDL2 package
 find_package(SDL2 REQUIRED)
@@ -45,7 +48,21 @@ include_directories(${SDL2_TTF_INCLUDE_DIRS})
 link_directories(${SDL2_MIXER_LIBRARY_DIRS} ${SDL2_IMAGE_LIBRARY_DIRS})
 
 # Add the executable (make sure the executable name matches the target)
-add_executable(Platformer main.cpp GameWindow.cpp Map.cpp LoseScreen.cpp StartScreen.cpp Item.cpp Text.cpp Enemy.cpp Sprite.cpp Platform.cpp Character.cpp Music.cpp Winscreen.cpp)
+add_executable(Platformer
+    src/main.cpp
+    src/GameWindow.cpp
+    src/Map.cpp
+    src/LoseScreen.cpp
+    src/StartScreen.cpp
+    src/Item.cpp
+    src/Text.cpp
+    src/Enemy.cpp
+    src/Sprite.cpp
+    src/Platform.cpp
+    src/Character.cpp
+    src/Music.cpp
+    src/Winscreen.cpp
+)
 
 # Link SDL2 to your target
 target_link_libraries(Platformer ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES})

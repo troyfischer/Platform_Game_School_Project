@@ -6,6 +6,7 @@ Revival of a platform game I created my senior year of college ~ my first real p
 
 * Work Items
 ** DONE Build using cmake
+** DONE Cleanup file structure / hierarchy
 ** TODO Improve physics functionality
 *** TODO Movement & Jumping
 *** TODO Landing on platforms

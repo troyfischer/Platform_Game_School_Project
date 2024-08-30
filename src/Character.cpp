@@ -38,11 +38,11 @@ void Character::init(SDL_Renderer *renderer, std::string textureFilePath, int nu
     _frameCount = 0;
     
     /* All the music/sounds that will be played */
-    _gameMusic = new Music("./resources/music.wav");
-    _jumpSound = new Music("./resources/jump.wav");
-    _invincibilityMusic = new Music("./resources/invincible.wav");
-    _1upSound = new Music("./resources/1-up.wav");
-    _deathSound = new Music("./resources/death.wav");
+    _gameMusic = new Music("./resources/sounds/music.wav");
+    _jumpSound = new Music("./resources/sounds/jump.wav");
+    _invincibilityMusic = new Music("./resources/sounds/invincible.wav");
+    _1upSound = new Music("./resources/sounds/1-up.wav");
+    _deathSound = new Music("./resources/sounds/death.wav");
     
     _gameMusic->playMusic();
 }

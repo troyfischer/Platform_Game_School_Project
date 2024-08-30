@@ -2,9 +2,17 @@
 #+author: Troy Fischer
 
 
-Revival of a platform game I created my senior year of college ~ my first real programming project.
+Revival of a platform game I created my senior year of college ~ my first real programming project. Originally built it using xcode 🤮.
 
-* Compile
+* Work Items
+** DONE Build using cmake
+** TODO Improve physics functionality
+*** TODO Movement & Jumping
+*** TODO Landing on platforms
+** TODO Improve level generation
+hard coded a bunch of places to put the platforms and simply removed platforms to make the levels harder
+* Documentation
+** Compile
 Uses ~cmake~.
 #+begin_src sh
 rm -rf build
@@ -13,4 +21,8 @@ cd build
 cmake ..
 cd ..
 cmake --build build/
+#+end_src
+** Run
+#+begin_src sh
+./build/Platformer
 #+end_src

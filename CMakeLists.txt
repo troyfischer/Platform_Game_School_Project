@@ -47,22 +47,10 @@ include_directories(${SDL2_TTF_INCLUDE_DIRS})
 # Link SDL2 and its modules with the correct linker flags
 link_directories(${SDL2_MIXER_LIBRARY_DIRS} ${SDL2_IMAGE_LIBRARY_DIRS})
 
+file(GLOB_RECURSE SOURCES "src/*.cpp")
+
 # Add the executable (make sure the executable name matches the target)
-add_executable(Platformer
-    src/main.cpp
-    src/GameWindow.cpp
-    src/Map.cpp
-    src/LoseScreen.cpp
-    src/StartScreen.cpp
-    src/Item.cpp
-    src/Text.cpp
-    src/Enemy.cpp
-    src/Sprite.cpp
-    src/Platform.cpp
-    src/Character.cpp
-    src/Music.cpp
-    src/Winscreen.cpp
-)
+add_executable(Platformer ${SOURCES})
 
 # Link SDL2 to your target
 target_link_libraries(Platformer ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES})

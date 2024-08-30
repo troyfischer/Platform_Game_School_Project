@@ -1,0 +1,16 @@
+#+title: My First Platformer
+#+author: Troy Fischer
+
+
+Revival of a platform game I created my senior year of college ~ my first real programming project.
+
+* Compile
+Uses ~cmake~.
+#+begin_src sh
+rm -rf build
+mkdir build
+cd build
+cmake ..
+cd ..
+cmake --build build/
+#+end_src

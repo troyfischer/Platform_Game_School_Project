@@ -2,7 +2,7 @@
 #define WinScreen_hpp
 
 #include <stdio.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "Text.hpp"
 #include "StartScreen.hpp"
 #include "Character.hpp"

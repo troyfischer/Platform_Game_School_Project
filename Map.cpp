@@ -19,16 +19,16 @@ void Map::init(SDL_Renderer *renderer)
     _winScreen = new WinScreen(renderer);
     
     //create hero
-    _hero.init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/characterSprite.png", 4, 4);
+    _hero.init(renderer, "./resources/characterSprite.png", 4, 4);
     
     //load background
-    SDL_Surface *temp = IMG_Load("/Users/Troy/Documents/workspace/Xcode/Working/DungeonEscape/DungeonEscape/background.jpg");
+    SDL_Surface *temp = IMG_Load("./resources/background.jpg");
     _background = SDL_CreateTextureFromSurface(renderer, temp);
     SDL_FreeSurface(temp);
     
     std::stringstream ss;
     ss << "Lives: " << _hero.getLives();
-    _heroLivesText = new Text(renderer, ss.str(), {255,0,0,255}, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 20);
+    _heroLivesText = new Text(renderer, ss.str(), {255,0,0,255}, "./resources/Times New Roman.ttf", 20);
 }
 
 void Map::createMap1(SDL_Renderer *renderer)
@@ -77,25 +77,25 @@ void Map::createMap1(SDL_Renderer *renderer)
     
     /* Creation of Enemies */
     Enemy * zombie = new Enemy();
-    zombie->init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/zombie.png", 2, 3, false, plat26->getW()/2, 2, 3);
+    zombie->init(renderer, "./resources/zombie.png", 2, 3, false, plat26->getW()/2, 2, 3);
     zombie->setPos((plat26->getX() + plat26->getW()/2) - zombie->getSpriteWidth()/2, plat26->getY() - zombie->getSpriteHeight());
     Enemy * fireball = new Enemy();
-    fireball->init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/fireball.png", 1, 1, true, 50, 1, 2);
+    fireball->init(renderer, "./resources/fireball.png", 1, 1, true, 50, 1, 2);
     fireball->setPos((plat24->getX() + plat24->getW()/2) - fireball->getSpriteWidth()/2, plat24->getY() - fireball->getSpriteHeight());
     Enemy * spider = new Enemy();
-    spider->init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/spiderspritesheet.png", 4, 2, false, plat7->getW()/2, 3, 1);
+    spider->init(renderer, "./resources/spiderspritesheet.png", 4, 2, false, plat7->getW()/2, 3, 1);
     spider->setPos((plat7->getX() + plat7->getW()/2) - spider->getSpriteWidth()/2, plat7->getY() - spider->getSpriteHeight());
     Enemy * zombie2 = new Enemy();
-    zombie2->init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/zombie.png", 2, 3, false, plat11->getW()/2, 2, 1);
+    zombie2->init(renderer, "./resources/zombie.png", 2, 3, false, plat11->getW()/2, 2, 1);
     zombie2->setPos((plat11->getX() + plat11->getW()/2) - zombie2->getSpriteWidth()/2, plat11->getY() - zombie2->getSpriteHeight());
     Enemy * fireball1 = new Enemy();
-    fireball1->init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/fireball.png", 1, 1, true, 50, 1, 3);
+    fireball1->init(renderer, "./resources/fireball.png", 1, 1, true, 50, 1, 3);
     fireball1->setPos((plat30->getX() + plat30->getW()/2) - fireball1->getSpriteWidth()/2, plat30->getY() - fireball1->getSpriteHeight()); //platform 30
     Enemy * fireball2 = new Enemy();
-    fireball2->init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/fireball.png", 1, 1, true, 50, 1, 2);
+    fireball2->init(renderer, "./resources/fireball.png", 1, 1, true, 50, 1, 2);
     fireball2->setPos(810 + 50/2 - fireball2->getSpriteWidth()/2, 370 - fireball2->getSpriteHeight()); //platform 32
     Enemy * spider2 = new Enemy();
-    spider2->init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/spiderspritesheet.png", 4, 2, false, plat33->getW()/2, 3, 3);
+    spider2->init(renderer, "./resources/spiderspritesheet.png", 4, 2, false, plat33->getW()/2, 3, 3);
     spider2->setPos((plat33->getX() + plat33->getW()/2) - spider2->getSpriteWidth()/2, plat33->getY() - spider2->getSpriteHeight());
     /* Creation of Enemies */
 
@@ -110,10 +110,10 @@ void Map::createMap1(SDL_Renderer *renderer)
     
     /* Creation of Items */
     Item * door = new Item();
-    door->init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/door.jpg", 1, 1, 3, 3);
+    door->init(renderer, "./resources/door.jpg", 1, 1, 3, 3);
     door->setPos(plat19->getX() + plat19->getW() - door->getSpriteWidth(), plat19->getY() - door->getSpriteHeight());
     Item * heart = new Item();
-    heart->init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/heart.png", 1, 1, 1, 1);
+    heart->init(renderer, "./resources/heart.png", 1, 1, 1, 1);
     heart->setPos((plat10->getX() + plat10->getW()/2) - heart->getSpriteWidth()/2, plat10->getY() - heart->getSpriteHeight());
     /* Creation of Items */
     
@@ -154,7 +154,7 @@ void Map::createMap2(SDL_Renderer *renderer)
     
     //Adding an item to the map
     Item * star = new Item();
-    star->init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/star.png", 1, 1, 2, 2);
+    star->init(renderer, "./resources/star.png", 1, 1, 2, 2);
     star->setPos(400 + 400 - star->getSpriteWidth(), 645 - star->getSpriteHeight());
     items.push_back(star);
 }
@@ -190,13 +190,13 @@ void Map::createMap3(SDL_Renderer *renderer)
     
     //Adding an item to the map
     Item * heart = new Item();
-    heart->init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/heart.png", 1, 1, 1, 3);
+    heart->init(renderer, "./resources/heart.png", 1, 1, 1, 3);
     heart->setPos((275 + 100/2) - heart->getSpriteWidth()/2, 450 - heart->getSpriteHeight());
     items.push_back(heart);
     
     //Adding an enemy to the map
     Enemy * fireball = new Enemy();
-    fireball->init(renderer, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/fireball.png", 1, 1, true, 50, 1, 3);
+    fireball->init(renderer, "./resources/fireball.png", 1, 1, true, 50, 1, 3);
     fireball->setPos((825 + 75/2) - fireball->getSpriteWidth()/2, 255 - fireball->getSpriteHeight());
     enemies.push_back(fireball);
 }

@@ -14,7 +14,7 @@ StartScreen::StartScreen(SDL_Renderer *renderer)
     
     /* Initialize sprite */
     SDL_Surface *tempSurface = NULL;
-    tempSurface = IMG_Load("/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/characterSprite.png");
+    tempSurface = IMG_Load("./resources/characterSprite.png");
     if (!tempSurface)
     {
         printf("IMG_Load error: %s\n", IMG_GetError());
@@ -49,12 +49,12 @@ StartScreen::StartScreen(SDL_Renderer *renderer)
     _frameCount = 0;
     
     /* Initialize text */
-    _title = new Text(renderer, "Dungeon Escape", {255,0,0,255}, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 20);
-    _controls = new Text(renderer, "Controls", {255,0,0,255}, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 20);
-    _W = new Text(renderer, "W - Jump", {255,0,0,255}, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 15);
-    _D = new Text(renderer, "D - Move Right", {255,0,0,255}, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 20);
-    _A = new Text(renderer, "A - Move Left", {255,0,0,255}, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 20);
-    _pressSpaceText = new Text(renderer, "Press Space to begin", {255,0,0,255}, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 20);
+    _title = new Text(renderer, "Dungeon Escape", {255,0,0,255}, "./resources/Times New Roman.ttf", 20);
+    _controls = new Text(renderer, "Controls", {255,0,0,255}, "./resources/Times New Roman.ttf", 20);
+    _W = new Text(renderer, "W - Jump", {255,0,0,255}, "./resources/Times New Roman.ttf", 15);
+    _D = new Text(renderer, "D - Move Right", {255,0,0,255}, "./resources/Times New Roman.ttf", 20);
+    _A = new Text(renderer, "A - Move Left", {255,0,0,255}, "./resources/Times New Roman.ttf", 20);
+    _pressSpaceText = new Text(renderer, "Press Space to begin", {255,0,0,255}, "./resources/Times New Roman.ttf", 20);
     
 }
 

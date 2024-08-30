@@ -4,8 +4,8 @@ WinScreen::WinScreen(SDL_Renderer *renderer)
 {
     _background = {0,0,WINDOW_WIDTH, WINDOW_HEIGHT};
     
-    _youWon = new Text(renderer, "You escaped!",{0,255,255,255}, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 30);
-    _tryAgain = new Text(renderer, "Press Return to play again", {0,255,255,255}, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 30);
+    _youWon = new Text(renderer, "You escaped!",{0,255,255,255}, "./resources/Times New Roman.ttf", 30);
+    _tryAgain = new Text(renderer, "Press Return to play again", {0,255,255,255}, "./resources/Times New Roman.ttf", 30);
 }
 
 WinScreen::~WinScreen()

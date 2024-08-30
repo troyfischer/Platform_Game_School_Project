@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <sstream>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "Platform.hpp"
 #include "Enemy.hpp"
 #include "Character.hpp"

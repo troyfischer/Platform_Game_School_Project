@@ -4,8 +4,8 @@ LoseScreen::LoseScreen(SDL_Renderer *renderer)
 {
     _background = {0,0,WINDOW_WIDTH,WINDOW_HEIGHT};
     
-    _youLost = new Text(renderer, "You didn't escape the dungeon", {255,0,0,255}, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 30);
-    _tryAgain = new Text(renderer, "Press Return to try again", {255,0,0,255}, "/Users/Troy/Documents/workspace/Xcode/Working/Platformer/Platformer/Times New Roman.ttf", 20);
+    _youLost = new Text(renderer, "You didn't escape the dungeon", {255,0,0,255}, "./resources/Times New Roman.ttf", 30);
+    _tryAgain = new Text(renderer, "Press Return to try again", {255,0,0,255}, "./resources/Times New Roman.ttf", 20);
 }
 
 LoseScreen::~LoseScreen()
